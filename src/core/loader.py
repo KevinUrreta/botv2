@@ -1,5 +1,6 @@
 import importlib
 from collections import defaultdict
+from logging import Logger
 from pathlib import Path
 from typing import Any
 
@@ -11,13 +12,16 @@ class Loader:
     Cargador dinámico de módulos (Comandos, Eventos y Tareas) para el cliente.
     """
 
-    def __init__(self, client: commands.Bot) -> None:
+    def __init__(self, client: commands.Bot, logger: Logger) -> None:
         """
         Inicializa el cargador dinámico usando la instancia del cliente.
         :param client: Instancia principal del cliente
         :type client: commands.Bot
+        :param logger: Logger del cliente
+        :type logger: logging.Logger
         """
         self.client: commands.Bot = client
+        self.logger: Logger = logger
 
     async def load_cogs(self) -> None:
         """
@@ -71,10 +75,9 @@ class Loader:
                 except (ImportError, AttributeError, TypeError) as error:
                     categories[key]["failed"].append((file.name, error))
 
-        self._summary(categories)
+        self.summary(categories)
 
-    @staticmethod
-    def _summary(categories: dict) -> None:
+    def summary(self, categories: dict) -> None:
         """
         Muestra el resultado detallado de la carga de módulos.
         :param categories: Diccionario de modulos, dividido por categorías
@@ -83,6 +86,6 @@ class Loader:
         for (cog_type, category), data in categories.items():
             if data["failed"]:
                 for filename, error in data["failed"]:
-                    print(f'{category} | {filename} | {type(error).__name__}: {error}')
+                    self.logger.info(f'{category} | {filename} | {type(error).__name__}: {error}')
                 continue
-            print(f'{cog_type} | {category} | Modules loaded {data["loaded"]}.')
+            self.logger.info(f'{cog_type} | {category} | Modules loaded {data["loaded"]}.')
