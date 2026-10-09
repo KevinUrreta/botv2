@@ -29,6 +29,14 @@ class Settings(BaseSettings):
     spotify_client_id: str | None = None
     spotify_secret_id: str | None = None
 
+    @property
+    def postgres_url(self):
+        return (
+            f"postgresql+asyncpg://"
+            f"{self.postgres_user}:{self.postgres_password}"
+            f"@{self.postgres_host}:{self.postgres_port}"
+            f"/{self.postgres_db}"
+        )
     @field_validator("*", mode="before")
     @classmethod
     def validate_not_empty(cls, value):
