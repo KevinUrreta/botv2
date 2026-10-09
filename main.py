@@ -19,10 +19,11 @@ class Bot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix='!', intents=discord.Intents.all())
         self.postgres = Database(url=settings.postgres_url, logger=logger)
+        self.logger = logger
 
 
     async def setup_hook(self) -> None:
-        await Loader(self, logger).load_cogs()
+        await Loader(self, self.logger).load_cogs()
         await Lavalink.connect(
             bot=self,
             uri=settings.lavalink_uri,
