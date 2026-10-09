@@ -1,2 +1,65 @@
 services:
 
+  bot:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: discord_bot
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    volumes:
+      - ../logs:/app/logs
+    depends_on:
+      lavalink:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    command: python main.py
+
+  lavalink:
+    build:
+      context: ./lavalink
+      dockerfile: Dockerfile
+    container_name: lavalink
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      - SERVER_PORT=2333
+    ports:
+      - "2333:2333"
+    volumes:
+      - ./lavalink/application.yml:/opt/Lavalink/application.yml
+      - ./lavalink/plugins:/opt/Lavalink/plugins
+      - ../logs:/opt/Lavalink/logs
+    healthcheck:
+      test: ["CMD", "python3.11", "-c", "import socket; socket.create_connection(('localhost', 2333), 2).close()"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 120s
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    env_file:
+      - ../.env
+    volumes:
+      - ../postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    command:
+      - postgres
+      - -c
+      - logging_collector=on
+      - -c
+      - log_directory=/var/log/postgresql
+      - -c
+      - log_filename=postgres.log
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

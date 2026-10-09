@@ -1,7 +1,5 @@
 # Entorno
 .env
-.env.*
-scripts/
 
 # Python
 __pycache__/
