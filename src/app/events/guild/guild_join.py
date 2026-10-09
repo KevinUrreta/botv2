@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 
@@ -16,10 +17,12 @@ class GuildJoin(commands.Cog):
         self.client: commands.Bot = client
 
     @commands.Cog.listener()
-    async def on_guild_join(self):
+    async def on_guild_join(self, guild: discord.Guild) -> None:
         """
         Descripción del evento.
 
         :return: None
         """
-        pass
+        self.client.logger.info(
+            f"Se ha unido al servidor '{guild.name}' (ID: {guild.id})."
+        )

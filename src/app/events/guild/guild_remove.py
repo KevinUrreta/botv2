@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 
@@ -16,10 +17,12 @@ class GuildRemove(commands.Cog):
         self.client: commands.Bot = client
 
     @commands.Cog.listener()
-    async def on_guild_remove(self):
+    async def on_guild_remove(self, guild: discord.Guild):
         """
         Descripción del evento.
 
         :return: None
         """
-        pass
+        self.client.logger.info(
+            f"Ha abandonado el servidor '{guild.name}' (ID: {guild.id})."
+        )
