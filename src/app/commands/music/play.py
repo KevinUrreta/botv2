@@ -13,8 +13,8 @@ class Play(commands.Cog):
         """
         self.client: commands.Bot = client
 
-    @commands.command(name='Play', help='Does something')
-    async def Play(self, ctx: commands.Context):
+    @commands.command(name='play', help='Does something')
+    async def play(self, ctx: commands.Context):
         """
         Descripción del comando.
         :param ctx: Contexto del comando
