@@ -22,4 +22,6 @@ class Error(commands.Cog):
 
         :return: None
         """
-        pass
+        self.client.logger.error(
+            f"{self.__class__.__name__}: {self.__class__.__doc__}"
+        )
