@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: discord_bot
+    container_name: Discord
     restart: unless-stopped
     env_file:
       - ../.env
@@ -12,7 +12,7 @@ services:
       - ../logs:/app/logs
     depends_on:
       lavalink:
-        condition: service_started
+        condition: service_healthy
       postgres:
         condition: service_healthy
     command: python main.py
@@ -21,7 +21,7 @@ services:
     build:
       context: ./lavalink
       dockerfile: Dockerfile
-    container_name: lavalink
+    container_name: Lavalink
     restart: unless-stopped
     env_file:
       - ../.env
@@ -38,15 +38,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
-      start_period: 120s
+      start_period: 10s
 
   postgres:
     image: postgres:16
-    container_name: postgres
+    container_name: PostgreSQL
     env_file:
       - ../.env
     volumes:
       - ../postgres_data:/var/lib/postgresql/data
+      - ../logs/:/var/log/postgresql
     ports:
       - "5432:5432"
     restart: unless-stopped
