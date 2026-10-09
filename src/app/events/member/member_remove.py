@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 
@@ -16,10 +17,12 @@ class MemberRemove(commands.Cog):
         self.client: commands.Bot = client
 
     @commands.Cog.listener()
-    async def on_member_remove(self):
+    async def on_member_remove(self, member: discord.Member):
         """
         Descripción del evento.
 
         :return: None
         """
-        pass
+        self.client.logger.info(
+            f"{member.name}#{member.discriminator} ha abandonado a {member.guild.name}#{member.guild.id}"
+        )

@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 
@@ -16,10 +17,12 @@ class MemberJoin(commands.Cog):
         self.client: commands.Bot = client
 
     @commands.Cog.listener()
-    async def on_member_join(self):
+    async def on_member_join(self, member: discord.Member):
         """
         Descripción del evento.
 
         :return: None
         """
-        pass
+        self.client.logger.info(
+            f"Miembro nuevo: {member.name} | ID: {member.id} en {member.guild.name}"
+        )
